@@ -25,12 +25,13 @@ for(var r = 0; r <squareColumnCount ; r++){
 document.addEventListener("keydown", keyDownHandler, false);
 
 function keyDownHandler(e) {
-    //randomSquares();
     fillSpace(e.key);
-    // updateSquares(e.key);
-    //fillSpace(e.key);
-   randomSquare();
+    updateSquares(e.key);
+    fillSpace(e.key);
+    generate ? generateRandomSquare() : checkEndGame();
 }
+
+
 function randomStarters() {
   let randRow;
   let randColum;
@@ -41,12 +42,47 @@ function randomStarters() {
   randColum= random(2,3);
   squares[randRow][randColum] = random(1,10) == 4? 4: 2;
 }
+
+var generate = false;
+function generateRandomSquare(){
+  generate = false;
+  setTimeout(randomSquare, 150);
+}
+
+var loose = false;
+function checkEndGame() {
+  var isFull = true;
+  forLoop:
+  for(var r = 0; r < squareRowCount; r++){
+    for(var c =0; c< squareColumnCount; c++){
+       if(!squares[r][c]){
+         isFull = false;
+         break forLoop;
+       }
+    }
+  }
+  if(isFull){
+    var checkLoose = true;
+    forLoop2:
+    for(var r = 0; r < squareRowCount-1; r++){
+      for(var c =0; c< squareColumnCount-1; c++){
+         if(squares[r][c] === squares[r][c+1] || squares[r][c] == squares[r+1][c]){
+           checkLoose = false;
+           break forLoop2;
+         }
+      }
+    }
+  }
+  loose += checkLoose;
+}
 function randomSquare() {
-     var randRow = random(0, squareRowCount-1);
-     var randColum= random(0, squareColumnCount-1);
-     if(!squares[randRow][randColum]){
-       squares[randRow][randColum] = random(1,7) == 4? 4: 2;
-     }
+    var i, j;
+    do {
+      i = random(0,3);
+      j = random(0,3);
+      console.log('while');
+    } while (squares[i][j]);
+    squares[i][j] = random(1,10) === 4 ? 4 : 2;
 }
 
 function updateSquares(key){
@@ -63,39 +99,43 @@ function updateSquares(key){
               squares[r+1][c]=0;
               // plus+=((Math.log2(squares[r][c]))-1)*(squares[r][c]);
               // score+=(((Math.log2(squares[r][c]))-1)*(squares[r][c]));
+              generate = true;
             }
           }
         }
        break;
      case "ArrowDown":
-        for(var r=0;r<4;r++){
-          for(var c=0;c<3;c++){
-            if(squares[r][c]&&squares[r][c]===squares[r][c+1]){
+        for(var r=3;r>0;r--){
+          for(var c=0;c<4;c++){
+            if(squares[r][c]&&squares[r][c]===squares[r-1][c]){
               //apocalypse=0;
-              squares[r][c+1]+=squares[r][c];
-              squares[r][c]=0;
+              squares[r][c]+=squares[r-1][c];
+              squares[r-1][c]=0;
               // plus+=((Math.log2(squares[r][c]))-1)*(squares[r][c]);
               // score+=(((Math.log2(squares[r][c]))-1)*(squares[r][c]));
+              generate = true;
             }
           }
         }
        break;
      case "ArrowLeft":
       for(var r=0; r<squareRowCount; r++){
-        for(var c=squareColumnCount-1; c>0; c--){
-          if(squares[c][r]&&squares[c][r]==squares[c-1][r]){
-             squares[c-1][r]+=squares[c][r];
-             squares[c][r]=0;
+        for(var c=0; c<squareColumnCount-1; c++){
+          if(squares[r][c]&&squares[r][c]==squares[r][c+1]){
+             squares[r][c]+=squares[r][c+1];
+             squares[r][c+1]=0;
+             generate = true;
           }
         }
       }
       break;
     case "ArrowRight":
      for(var r=0; r<squareRowCount; r++){
-       for(var c=0; c<squareColumnCount-1; c++){
-         if(squares[c][r]&&squares[c][r]==squares[c+1][r]){
-            squares[c+1][r]+=squares[c][r];
-            squares[c][r]=0;
+       for(var c=squareColumnCount-1; c>0; c--){
+         if(squares[r][c]&&squares[r][c]==squares[r][c-1]){
+            squares[r][c]+=squares[r][c-1];
+            squares[r][c-1]=0;
+            generate = true;
          }
        }
      }
@@ -115,6 +155,7 @@ function fillSpace(key) {
                  if(squares[k][c]){
                    squares[r][c] = squares[k][c];
                    squares[k][c] = 0;
+                   generate = true;
                    break;
                  }
                }
@@ -130,6 +171,7 @@ function fillSpace(key) {
                  if(squares[k][c]){
                    squares[r][c] = squares[k][c];
                    squares[k][c] = 0;
+                   generate = true;
                    break;
                  }
                }
@@ -145,6 +187,7 @@ function fillSpace(key) {
                  if(squares[r][k]){
                    squares[r][c] = squares[r][k];
                    squares[r][k] = 0;
+                   generate = true;
                    break;
                  }
                }
@@ -160,6 +203,7 @@ function fillSpace(key) {
                 if(squares[r][k]){
                   squares[r][c] = squares[r][k];
                   squares[r][k] = 0;
+                  generate = true;
                   break;
                 }
               }
