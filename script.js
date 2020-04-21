@@ -1,5 +1,6 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const btn = document.getElementsByName('button');
 
 var x = 0;
 var y = 0;
@@ -11,6 +12,7 @@ var squarePadding = 5;
 var squareOffsetTop = 5;
 var squareOffsetLeft = 5;
 var squares = [];
+var prevSquares = [];
 
 function random(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -25,33 +27,49 @@ for(var r = 0; r <squareColumnCount ; r++){
 document.addEventListener("keydown", keyDownHandler, false);
 
 function keyDownHandler(e) {
+    console.clear();
+    savePrevious();
     fillSpace(e.key);
     updateSquares(e.key);
     fillSpace(e.key);
-    generate ? generateRandomSquare() : checkEndGame();
+    generate * !checkFull() ? generateRandomSquare() : checkEndGame();
+    console.log('generate: ' + generate)
+    console.log('generate * !checkFull() = ', generate * !checkFull());
+    console.log('isfull: ', checkFull())
 }
 
 
 function randomStarters() {
-  let randRow;
-  let randColum;
-  randRow = random(0, squareColumnCount-1);
-  randColum = random(0, 1);
-  squares[randRow][randColum] = 2;
-  randRow = random(0, squareColumnCount-1);
-  randColum= random(2,3);
-  squares[randRow][randColum] = random(1,10) == 4? 4: 2;
+  setTimeout(()=>{
+    let randRow;
+    let randColum;
+    randRow = random(0, squareColumnCount-1);
+    randColum = random(0, 1);
+    squares[randRow][randColum] = 2;
+    randRow = random(0, squareColumnCount-1);
+    randColum= random(2,3);
+    squares[randRow][randColum] = random(1,10) == 4? 4: 2;
+
+  }, 150);
 }
 
 var generate = false;
 function generateRandomSquare(){
   generate = false;
   setTimeout(randomSquare, 150);
+  checkEndGame();
+}
+function savePrevious() {
+  for(var r = 0; r < squareRowCount; r++){
+    prevSquares[r] = [];
+    for(var c =0; c< squareColumnCount; c++){
+       prevSquares[r][c] = squares[r][c];
+    }
+  }
 }
 
-var loose = false;
-function checkEndGame() {
-  var isFull = true;
+function checkFull() {
+  let isFull = true;
   forLoop:
   for(var r = 0; r < squareRowCount; r++){
     for(var c =0; c< squareColumnCount; c++){
@@ -61,8 +79,11 @@ function checkEndGame() {
        }
     }
   }
-  if(isFull){
-    var checkLoose = true;
+  return isFull;
+}
+function checkEndGame() {
+  var checkLoose = true;
+  if(checkFull()){
     forLoop2:
     for(var r = 0; r < squareRowCount-1; r++){
       for(var c =0; c< squareColumnCount-1; c++){
@@ -72,10 +93,12 @@ function checkEndGame() {
          }
       }
     }
+    console.log(checkLoose?'you loose': 'you stuck');
   }
-  loose += checkLoose;
 }
+
 function randomSquare() {
+  if(!checkFull()){
     var i, j;
     do {
       i = random(0,3);
@@ -83,6 +106,8 @@ function randomSquare() {
       console.log('while');
     } while (squares[i][j]);
     squares[i][j] = random(1,10) === 4 ? 4 : 2;
+
+  }
 }
 
 function updateSquares(key){
@@ -263,6 +288,7 @@ function makeColor(val, x) {
     case 2048:
        squareColor= "rgb(43, 25, 5)";
        harfX = x + 8;
+       console.log('you win');
       break;
     default:
       squareColor= 'rgb(198, 198, 198)';
@@ -298,6 +324,7 @@ randomStarters();
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawSquares();
+ // console.log('draw');
 
   requestAnimationFrame(draw);
 }
