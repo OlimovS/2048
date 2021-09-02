@@ -14,16 +14,23 @@ var squareOffsetLeft = 5;
 var squares = [];
 var prevSquares = [];
 
+// getting random value between min and max
+// uz: min va max oralig'ida random son olish
 function random(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+// for filling squares array
+// uz: squares arrayini elementlar bilan to'ldirish uchun
 for (var r = 0; r < squareColumnCount; r++) {
   squares[r] = [];
   for (var c = 0; c < squareRowCount; c++) {
     squares[r][c] = 0;
   }
 }
+
+// key down listener
+// uz: klaviatura bosilishini tinglovchi
 document.addEventListener("keydown", keyDownHandler, false);
 
 function keyDownHandler(e) {
@@ -38,6 +45,8 @@ function keyDownHandler(e) {
   console.log("isfull: ", checkFull());
 }
 
+// for 1-view random starters
+// uz: dastur dastlab ochilganda random holda dastlabki kataklarni joylash
 function randomStarters() {
   setTimeout(() => {
     let randRow;
@@ -51,12 +60,17 @@ function randomStarters() {
   }, 150);
 }
 
+// generating random square for 2048 to have a new square
+// uz: 2048 da doimo yangi katak random holda chiqib turishi kerak, u yoq bu yoqqa surganda
 var generate = false;
 function generateRandomSquare() {
   generate = false;
   setTimeout(randomSquare, 150);
   checkEndGame();
 }
+
+// saving prev squares
+// uz: oldingi katakchalarni saqlansh, nega yozganman bilmadim
 function savePrevious() {
   for (var r = 0; r < squareRowCount; r++) {
     prevSquares[r] = [];
@@ -66,6 +80,8 @@ function savePrevious() {
   }
 }
 
+// for checking whether  squares fill the all places
+// uz: kataklar butun maydonni egalladimi tekshirish uchun
 function checkFull() {
   let isFull = true;
   forLoop: for (var r = 0; r < squareRowCount; r++) {
@@ -78,6 +94,9 @@ function checkFull() {
   }
   return isFull;
 }
+
+// for checking whether game is over
+// o'yin tugaganini tekshriish uchun
 function checkEndGame() {
   var checkLoose = true;
   if (checkFull()) {
@@ -96,6 +115,8 @@ function checkEndGame() {
   }
 }
 
+// random square maker
+// random square yasovchi funksiya
 function randomSquare() {
   if (!checkFull()) {
     var i, j;
@@ -108,6 +129,8 @@ function randomSquare() {
   }
 }
 
+// updating square positions
+// kataklarni positsiyasini update qilish
 function updateSquares(key) {
   var plus = 0;
   var apocalypse = 1;
@@ -168,6 +191,8 @@ function updateSquares(key) {
   }
 }
 
+// filling free spaces with squares that need changing position
+// pozitsiyasi o'zgarishi kerak bo'lgan kataklar bilan bosh joylarni toldirish
 function fillSpace(key) {
   switch (key) {
     case "ArrowDown":
@@ -239,6 +264,8 @@ function fillSpace(key) {
   }
 }
 
+// uz: color yashovchi funksiya
+// function for color making
 function makeColor(val, x) {
   let squareColor;
   switch (val) {
@@ -293,6 +320,9 @@ function makeColor(val, x) {
   }
   return squareColor;
 }
+
+// ekranga kataklarni chizish
+// uz: draw squares to the screen
 var harfX, harfY;
 
 function drawSquares() {
@@ -317,7 +347,12 @@ function drawSquares() {
   }
 }
 
+// calling random starters
+// uz: randomStarters funksiyasini chaqirayapmiz
 randomStarters();
+
+// uz: shuncha tayyorlagan anrsalarimizni chizuvchi dastur
+// function that draws everything we do
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawSquares();
@@ -325,4 +360,7 @@ function draw() {
 
   requestAnimationFrame(draw);
 }
+
+// uz:funskiyani chaqirish
+// calling function
 draw();
