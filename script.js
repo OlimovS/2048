@@ -1,6 +1,7 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const btn = document.getElementsByName("button");
+const gameStatus = document.getElementById("game-status");
+// const btn = document.getElementsByName("button");
 
 var x = 0;
 var y = 0;
@@ -13,6 +14,12 @@ var squareOffsetTop = 5;
 var squareOffsetLeft = 5;
 var squares = [];
 var prevSquares = [];
+
+// function for setting game status
+// uz: game statusni o'rnatish
+function setGameSatus(message) {
+  gameStatus.textContent = message;
+}
 
 // getting random value between min and max
 // uz: min va max oralig'ida random son olish
@@ -42,11 +49,12 @@ function keyDownHandler(e) {
 
   if (checkFull()) {
     if (checkEndGame()) {
-      console.log("you loose");
+      setGameSatus("Siz yutqazdingiz!");
     } else {
-      console.log("You stuck");
+      setGameSatus("Siz tiqilib qoldiz!");
     }
   } else {
+    setGameSatus("");
     generateRandomSquare();
   }
 }
