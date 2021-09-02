@@ -39,10 +39,16 @@ function keyDownHandler(e) {
   fillSpace(e.key);
   updateSquares(e.key);
   fillSpace(e.key);
-  generate * !checkFull() ? generateRandomSquare() : checkEndGame();
-  console.log("generate: " + generate);
-  console.log("generate * !checkFull() = ", generate * !checkFull());
-  console.log("isfull: ", checkFull());
+
+  if (checkFull()) {
+    if (checkEndGame()) {
+      console.log("you loose");
+    } else {
+      console.log("You stuck");
+    }
+  } else {
+    generateRandomSquare();
+  }
 }
 
 // for 1-view random starters
@@ -111,8 +117,9 @@ function checkEndGame() {
         }
       }
     }
-    console.log(checkLoose ? "you loose" : "you stuck");
+    return checkLoose;
   }
+  return false;
 }
 
 // random square maker
